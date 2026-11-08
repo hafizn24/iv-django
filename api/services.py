@@ -1,5 +1,6 @@
 import base64
 import os
+import uuid
 
 import httpx
 from django.conf import settings
@@ -18,7 +19,7 @@ def upload_nric_image(file, visitor_ref: str) -> str:
     base = settings.SUPABASE_URL.rstrip("/")
     bucket = settings.SUPABASE_BUCKET
     ext = os.path.splitext(file.name)[1].lower() or ".jpg"
-    path = f"nric/{visitor_ref}{ext}"
+    path = f"nric/{visitor_ref}-{uuid.uuid4().hex[:8]}{ext}"
     resp = httpx.post(
         f"{base}/storage/v1/object/{bucket}/{path}",
         headers={

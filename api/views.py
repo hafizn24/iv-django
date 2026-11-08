@@ -119,7 +119,9 @@ def check_out(request, pk):
 def visitor_list(request):
     qs = Visitor.objects.all().order_by("-check_in_at")
     if not admin_only(request.user):
-        qs = qs.filter(check_out_at__isnull=True)
+        from django.utils import timezone
+        today = timezone.localdate()
+        qs = qs.filter(check_in_at__date=today)
     search = request.query_params.get("search", "").strip()
     if search:
         from django.db.models import Q
