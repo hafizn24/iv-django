@@ -42,6 +42,11 @@ def jwt_decode(token: str) -> dict:
 
 
 class JWTAuthentication(BaseAuthentication):
+    def authenticate_header(self, request):
+        # Without this, DRF coerces AuthenticationFailed to 403 instead of 401,
+        # so clients never see the 401 needed to clear an expired token.
+        return "Bearer"
+
     def authenticate(self, request):
         header = request.headers.get("Authorization", "")
         if not header.startswith("Bearer "):
